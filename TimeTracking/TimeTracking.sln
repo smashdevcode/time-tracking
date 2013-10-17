@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracking.MvcApplication", "TimeTracking.MvcApplication\TimeTracking.MvcApplication.csproj", "{9C2ABC6B-C03F-4A51-8CEC-B03C420DF21C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracking.MvcApplication.Tests", "TimeTracking.MvcApplication.Tests\TimeTracking.MvcApplication.Tests.csproj", "{0D24C7CB-457A-4E11-B60D-FCDF5F0EFA2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeTracking.Data", "TimeTracking.Data\TimeTracking.Data.csproj", "{CF72B3F0-876C-401C-BC4F-1DF8F3440003}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9C2ABC6B-C03F-4A51-8CEC-B03C420DF21C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C2ABC6B-C03F-4A51-8CEC-B03C420DF21C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C2ABC6B-C03F-4A51-8CEC-B03C420DF21C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C2ABC6B-C03F-4A51-8CEC-B03C420DF21C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D24C7CB-457A-4E11-B60D-FCDF5F0EFA2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D24C7CB-457A-4E11-B60D-FCDF5F0EFA2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D24C7CB-457A-4E11-B60D-FCDF5F0EFA2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D24C7CB-457A-4E11-B60D-FCDF5F0EFA2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF72B3F0-876C-401C-BC4F-1DF8F3440003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF72B3F0-876C-401C-BC4F-1DF8F3440003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF72B3F0-876C-401C-BC4F-1DF8F3440003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF72B3F0-876C-401C-BC4F-1DF8F3440003}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
