@@ -2,6 +2,7 @@ using System;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using TimeTracking.Data.Models;
 
 namespace TimeTracking.Data.Migrations
 {
@@ -14,18 +15,14 @@ namespace TimeTracking.Data.Migrations
 
         protected override void Seed(Context context)
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+			var user = new User()
+			{
+				UserId = 1,
+				Username = "jamesc",
+				Name = "James Churchill",
+				Email = "jamesc@csgpro.com"
+			};
+			context.Users.AddOrUpdate(user);
         }
     }
 }

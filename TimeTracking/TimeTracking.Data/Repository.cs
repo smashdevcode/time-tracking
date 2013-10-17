@@ -8,5 +8,13 @@ namespace TimeTracking.Data
 {
 	public class Repository
 	{
+		private Context _context;
+
+		public Repository()
+		{
+			_context = new Context();
+		}
+
+		// TODO setup methods
 	}
 }
