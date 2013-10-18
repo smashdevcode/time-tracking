@@ -11,8 +11,9 @@ namespace TimeTracking.Data.Models
 		public int TimeEntryId { get; set; }
 		public int UserId { get; set; }
 		public int ProjectTaskId { get; set; }
-		public DateTime TimeIn { get; set; }
-		public DateTime? TimeOut { get; set; }
+		public bool Billable { get; set; }
+		public DateTime TimeInUtc { get; set; }
+		public DateTime? TimeOutUtc { get; set; }
 		public string Comment { get; set; }
 
 		public User User { get; set; }
