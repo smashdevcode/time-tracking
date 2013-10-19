@@ -6,15 +6,7 @@ using System.Threading.Tasks;
 
 namespace TimeTracking.Data
 {
-	public class Repository : IRepository
+	public class IRepository
 	{
-		private Context _context;
-
-		public Repository()
-		{
-			_context = new Context();
-		}
-
-		// TODO setup methods
 	}
 }

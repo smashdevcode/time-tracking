@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context.cs" />
+    <Compile Include="IRepository.cs" />
     <Compile Include="Migrations\201310181439505_Initial.cs" />
     <Compile Include="Migrations\201310181439505_Initial.Designer.cs">
       <DependentUpon>201310181439505_Initial.cs</DependentUpon>
