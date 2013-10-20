@@ -1,3 +1,57 @@
-﻿@{
+﻿@model TimeTracking.MvcApplication.ViewModels.HomeIndexViewModel
+
+@{
     ViewBag.Title = "Home";
+}
+
+<p>@Html.ActionLink("Add Time Entry", "Add", "TimeEntry")</p>
+
+<h3>Week of @Model.WeekOf.ToString("MM/dd/yyyy")</h3>
+
+<ul>
+	@foreach (var date in Model.Dates)
+	 {
+		 if (date == Model.Date)
+		 {
+			 <li>@date.ToString("MM/dd dddd")</li>
+		 }
+		 else
+		 {
+			 <li>@Html.RouteLink(date.ToString("MM/dd dddd"), "Date", 
+					new { date = date.ToString("yyyy-MM-dd") })</li>
+		 }
+	 }
+</ul>
+
+<p>@Html.RouteLink("Previous Week", "Date", 
+	new { date = Model.PreviousWeek.ToString("yyyy-MM-dd") })</p>
+
+<p>@Html.RouteLink("Next Week", "Date", 
+	new { date = Model.NextWeek.ToString("yyyy-MM-dd") })</p>
+
+<h3>Time Entries for @Model.Date.ToString("MM/dd/yyyy")</h3>
+
+@if (Model.TimeEntries.Count == 0)
+{
+	<p>There are no time entries for this day.</p>
+}
+else
+{
+	<table>
+		<thead>
+			<tr>
+				<th>Time In</th>
+				<th>Time Out</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var timeEntry in Model.TimeEntries)
+			 {
+				<tr>
+					<td>@timeEntry.TimeInUtc</td>
+					<td>@timeEntry.TimeOutUtc</td>
+				</tr>		
+			 }
+		</tbody>
+	</table>
 }

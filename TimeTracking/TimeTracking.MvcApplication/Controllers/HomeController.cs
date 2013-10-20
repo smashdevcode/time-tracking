@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using TimeTracking.Data;
+using TimeTracking.MvcApplication.ViewModels;
 
 namespace TimeTracking.MvcApplication.Controllers
 {
@@ -16,9 +17,15 @@ namespace TimeTracking.MvcApplication.Controllers
 			_repository = repository;
 		}
 
-        public ActionResult Index()
+        public ActionResult Index(DateTime? date = null)
         {
-            return View();
+			if (date == null)
+				date = DateTime.Today;
+
+			var user = _repository.GetUser(1);
+			var timeEntries = _repository.GetTimeEntries(date.Value, user);
+
+            return View(new HomeIndexViewModel(date.Value, timeEntries));
         }
     }
 }
