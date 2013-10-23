@@ -1,0 +1,88 @@
+﻿@model TimeTracking.MvcApplication.ViewModels.TimeEntryAddViewModel
+
+@{
+    ViewBag.Title = "Add Time Entry";
+}
+
+@using (Html.BeginForm()) {
+	@Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>TimeEntryAddViewModel</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ProjectId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ProjectId)
+            @Html.ValidationMessageFor(model => model.ProjectId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ProjectTaskId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ProjectTaskId)
+            @Html.ValidationMessageFor(model => model.ProjectTaskId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Billable)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Billable)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TimeInDate)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TimeInDate)
+            @Html.ValidationMessageFor(model => model.TimeInDate)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TimeInTime)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TimeInTime)
+            @Html.ValidationMessageFor(model => model.TimeInTime)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TimeOutDate)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TimeOutDate)
+            @Html.ValidationMessageFor(model => model.TimeOutDate)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TimeOutTime)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TimeOutTime)
+            @Html.ValidationMessageFor(model => model.TimeOutTime)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Comment)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Comment)
+            @Html.ValidationMessageFor(model => model.Comment)
+        </div>
+
+        <p>
+            <input type="submit" value="Add" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to Home", "Index", "Home")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

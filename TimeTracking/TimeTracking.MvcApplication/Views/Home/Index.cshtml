@@ -40,16 +40,26 @@ else
 	<table>
 		<thead>
 			<tr>
+				<th>Project</th>
+				<th>Task</th>
 				<th>Time In</th>
 				<th>Time Out</th>
+				<th>Total Time</th>
+				<th>Billable Time</th>
+				<th>Comment</th>
 			</tr>
 		</thead>
 		<tbody>
 			@foreach (var timeEntry in Model.TimeEntries)
 			 {
 				<tr>
+					<td>@timeEntry.ProjectTask.Project.Name</td>
+					<td>@timeEntry.ProjectTask.Name</td>
 					<td>@timeEntry.TimeInUtc</td>
 					<td>@timeEntry.TimeOutUtc</td>
+					<td>@timeEntry.TotalTime</td>
+					<td>@timeEntry.TotalBillableTime</td>
+					<td>@timeEntry.Comment</td>
 				</tr>		
 			 }
 		</tbody>

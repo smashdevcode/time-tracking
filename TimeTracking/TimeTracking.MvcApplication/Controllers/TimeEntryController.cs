@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using TimeTracking.Data;
 using TimeTracking.Data.Models;
+using TimeTracking.MvcApplication.ViewModels;
 
 namespace TimeTracking.MvcApplication.Controllers
 {
@@ -19,13 +20,34 @@ namespace TimeTracking.MvcApplication.Controllers
 
 		public ActionResult Add()
         {
-            return View();
+			// TODO replace with reference to the logged in user
+			var user = _repository.GetUser(1);
+
+			var projects = _repository.GetProjects(user.UserId);
+			var timeEntryAddViewModel = new TimeEntryAddViewModel() { Projects = projects };
+			return View(timeEntryAddViewModel);
         }
 
 		[HttpPost]
-		public ActionResult Add(TimeEntry timeEntry)
+		public ActionResult Add(TimeEntryAddViewModel timeEntryAddViewModel)
 		{
-			return View();
+			// TODO check if the model is in a valid state
+			// TODO get the time entry from the database
+			// TODO save the time entry record
+			// TODO redirect to the home page
+
+			if (ModelState.IsValid)
+			{
+				var timeEntry = timeEntryAddViewModel.GetTimeEntry();
+				//_repository.SaveTimeEntry(timeEntry);
+
+				return RedirectToAction("Index", "Home");
+			}
+			else
+			{
+				// TODO set the collection property values again???
+				return View(timeEntryAddViewModel);
+			}
 		}
 
 		public ActionResult Edit(int timeEntryId)

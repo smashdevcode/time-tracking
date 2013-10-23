@@ -22,7 +22,9 @@ namespace TimeTracking.MvcApplication.Controllers
 			if (date == null)
 				date = DateTime.Today;
 
+			// TODO replace with reference to the logged in user
 			var user = _repository.GetUser(1);
+
 			var timeEntries = _repository.GetTimeEntries(date.Value, user);
 
             return View(new HomeIndexViewModel(date.Value, timeEntries));

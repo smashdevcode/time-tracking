@@ -18,7 +18,17 @@ namespace TimeTracking.Data
 
 		public User GetUser(int userId)
 		{
-			return _context.Users.Where(u => u.UserId == userId).FirstOrDefault();
+			return _context.Users
+				.Where(u => u.UserId == userId)
+				.FirstOrDefault();
+		}
+
+		public List<Project> GetProjects(int userId)
+		{
+			return _context.Projects
+				.Where(p => p.UserId == userId)
+				.OrderBy(p => p.Name)
+				.ToList();
 		}
 
 		public List<TimeEntry> GetTimeEntries(DateTime date, User user)
@@ -27,7 +37,11 @@ namespace TimeTracking.Data
 			var dateUtcEnd = dateUtcStart.AddDays(1);
 
 			return _context.TimeEntries
-				.Where(te => te.UserId == user.UserId && te.TimeInUtc >= dateUtcStart && te.TimeInUtc < dateUtcEnd)
+				.Include("ProjectTask")
+				.Include("ProjectTask.Project")
+				.Where(te => te.UserId == user.UserId && 
+					te.TimeInUtc >= dateUtcStart && te.TimeInUtc < dateUtcEnd)
+				.OrderBy(te => te.TimeInUtc)
 				.ToList();
 		}
 	}

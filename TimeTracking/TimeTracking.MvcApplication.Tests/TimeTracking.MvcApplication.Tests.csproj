@@ -93,6 +93,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataModelTests\TimeEntryTests.cs" />
     <Compile Include="InfrastructureTests\DateTimeExtensionMethodTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -103,6 +104,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TimeTracking.Data\TimeTracking.Data.csproj">
+      <Project>{cf72b3f0-876c-401c-bc4f-1df8f3440003}</Project>
+      <Name>TimeTracking.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TimeTracking.MvcApplication\TimeTracking.MvcApplication.csproj">
       <Project>{9C2ABC6B-C03F-4A51-8CEC-B03C420DF21C}</Project>
       <Name>TimeTracking.MvcApplication</Name>

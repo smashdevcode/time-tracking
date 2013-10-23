@@ -13,7 +13,7 @@ namespace TimeTracking.Data.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201310181439505_Initial"; }
+            get { return "201310221452368_Initial"; }
         }
         
         string IMigrationMetadata.Source

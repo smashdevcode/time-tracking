@@ -15,6 +15,7 @@ namespace TimeTracking.Data.Models
 		[MaxLength(100)]
 		public string Name { get; set; }
 		public bool Billable { get; set; }
+		public bool RequireComment { get; set; }
 
 		public Project Project { get; set; }
 	}

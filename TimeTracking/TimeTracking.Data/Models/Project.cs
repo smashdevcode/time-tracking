@@ -15,10 +15,12 @@ namespace TimeTracking.Data.Models
 		}
 
 		public int ProjectId { get; set; }
+		public int UserId { get; set; }
 		[Required]
 		[MaxLength(100)]
 		public string Name { get; set; }
 
+		public User User { get; set; }
 		public List<ProjectTask> ProjectTasks { get; set; }
 	}
 }

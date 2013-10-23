@@ -10,6 +10,7 @@ namespace TimeTracking.Data
 	public interface IRepository
 	{
 		User GetUser(int userId);
+		List<Project> GetProjects(int userId);
 		List<TimeEntry> GetTimeEntries(DateTime date, User user);
 	}
 }
