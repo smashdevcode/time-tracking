@@ -24,30 +24,46 @@ namespace TimeTracking.MvcApplication.Controllers
 			var user = _repository.GetUser(1);
 
 			var projects = _repository.GetProjects(user.UserId);
-			var timeEntryAddViewModel = new TimeEntryAddViewModel() { Projects = projects };
+			// TODO remove???
+			//var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
+			var timeEntryAddViewModel = new TimeEntryAddViewModel()
+			{
+				Projects = projects,
+				// TODO remove???
+				//ProjectTasks = projectTasks
+			};
 			return View(timeEntryAddViewModel);
         }
 
 		[HttpPost]
 		public ActionResult Add(TimeEntryAddViewModel timeEntryAddViewModel)
 		{
-			// TODO check if the model is in a valid state
-			// TODO get the time entry from the database
-			// TODO save the time entry record
-			// TODO redirect to the home page
+			// TODO replace with reference to the logged in user
+			var user = _repository.GetUser(1);
 
 			if (ModelState.IsValid)
 			{
-				var timeEntry = timeEntryAddViewModel.GetTimeEntry();
-				//_repository.SaveTimeEntry(timeEntry);
+				var timeEntry = timeEntryAddViewModel.GetTimeEntry(user);
+				_repository.SaveTimeEntry(timeEntry);
 
 				return RedirectToAction("Index", "Home");
 			}
 			else
 			{
-				// TODO set the collection property values again???
+				var projects = _repository.GetProjects(user.UserId);
+				timeEntryAddViewModel.Projects = projects;
+				// TODO remove???
+				//var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
+				//timeEntryAddViewModel.ProjectTasks = projectTasks;
+		
 				return View(timeEntryAddViewModel);
 			}
+		}
+
+		public ActionResult GetProjectTasks(int id)
+		{
+			var projectTasks = _repository.GetProjectTasks(id);
+			return Json(projectTasks, JsonRequestBehavior.AllowGet);
 		}
 
 		public ActionResult Edit(int timeEntryId)

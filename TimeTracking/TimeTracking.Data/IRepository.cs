@@ -11,6 +11,8 @@ namespace TimeTracking.Data
 	{
 		User GetUser(int userId);
 		List<Project> GetProjects(int userId);
+		List<ProjectTask> GetProjectTasks(int projectId);
 		List<TimeEntry> GetTimeEntries(DateTime date, User user);
+		void SaveTimeEntry(TimeEntry timeEntry);
 	}
 }

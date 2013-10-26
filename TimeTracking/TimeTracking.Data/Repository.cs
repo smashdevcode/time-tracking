@@ -31,6 +31,14 @@ namespace TimeTracking.Data
 				.ToList();
 		}
 
+		public List<ProjectTask> GetProjectTasks(int projectId)
+		{
+			return _context.ProjectTasks
+				.Where(pt => pt.ProjectId == projectId)
+				.OrderBy(pt => pt.Name)
+				.ToList();
+		}
+
 		public List<TimeEntry> GetTimeEntries(DateTime date, User user)
 		{
 			var dateUtcStart = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(date, user.TimeZoneId, "UTC");
@@ -44,5 +52,20 @@ namespace TimeTracking.Data
 				.OrderBy(te => te.TimeInUtc)
 				.ToList();
 		}
+
+		public void SaveTimeEntry(TimeEntry timeEntry)
+		{
+			if (timeEntry.TimeEntryId > 0)
+			{
+				_context.Entry(timeEntry).State = System.Data.Entity.EntityState.Modified;
+			}
+			else
+			{
+				_context.TimeEntries.Add(timeEntry);
+			}
+
+			_context.SaveChanges();
+		}
+
 	}
 }
