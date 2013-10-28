@@ -25,11 +25,25 @@ namespace TimeTracking.Data.Models
 					return new TimeSpan();
 			}
 		}
+		public string TotalTimeDisplay
+		{
+			get
+			{
+				return Math.Round(TotalTime.TotalHours, 2).ToString();
+			}
+		}
 		public TimeSpan TotalBillableTime
 		{
 			get
 			{
 				return Billable ? TotalTime : new TimeSpan();
+			}
+		}
+		public string TotalBillableTimeDisplay
+		{
+			get
+			{
+				return Math.Round(TotalBillableTime.TotalHours, 2).ToString();
 			}
 		}
 		public string Comment { get; set; }

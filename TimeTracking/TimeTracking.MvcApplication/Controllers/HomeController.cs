@@ -27,7 +27,7 @@ namespace TimeTracking.MvcApplication.Controllers
 
 			var timeEntries = _repository.GetTimeEntries(date.Value, user);
 
-            return View(new HomeIndexViewModel(date.Value, timeEntries));
+            return View(new HomeIndexViewModel(date.Value, timeEntries, user));
         }
     }
 }

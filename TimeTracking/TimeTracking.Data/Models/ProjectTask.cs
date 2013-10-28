@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace TimeTracking.Data.Models
 		public bool Billable { get; set; }
 		public bool RequireComment { get; set; }
 
+		[JsonIgnore]
 		public Project Project { get; set; }
 	}
 }

@@ -9,11 +9,12 @@ namespace TimeTracking.MvcApplication.ViewModels
 {
 	public class HomeIndexViewModel
 	{
-		public HomeIndexViewModel(DateTime date, List<TimeEntry> timeEntries)
+		public HomeIndexViewModel(DateTime date, List<TimeEntry> timeEntries, User user)
 		{
 			Date = date;
 			WeekOf = date.GetStartOfWeek();
 			TimeEntries = timeEntries;
+			User = user;
 
 			var dates = new List<DateTime>();
 			for (var i = 0; i < 7; i++)
@@ -30,5 +31,19 @@ namespace TimeTracking.MvcApplication.ViewModels
 		public DateTime PreviousWeek { get; set; }
 		public DateTime NextWeek { get; set; }
 		public List<TimeEntry> TimeEntries { get; set; }
+		public User User { get; set; }
+
+		public string ToLocalDateTimeString(DateTime? utc, string formatString = "hh:mm tt", 
+			string defaultString = "N/A")
+		{
+			if (utc != null)
+			{
+				return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc.Value, "UTC", User.TimeZoneId).ToString(formatString);
+			}
+			else
+			{
+				return defaultString;
+			}
+		}
 	}
 }

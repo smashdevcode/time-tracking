@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TimeTracking.Data.Models;
+using System.Data.Entity;
 
 namespace TimeTracking.Data
 {
@@ -39,6 +40,13 @@ namespace TimeTracking.Data
 				.ToList();
 		}
 
+		public TimeEntry GetTimeEntry(int timeEntryId)
+		{
+			return _context.TimeEntries
+				.Include(te => te.ProjectTask)
+				.Where(te => te.TimeEntryId == timeEntryId).FirstOrDefault();
+		}
+
 		public List<TimeEntry> GetTimeEntries(DateTime date, User user)
 		{
 			var dateUtcStart = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(date, user.TimeZoneId, "UTC");
@@ -55,14 +63,27 @@ namespace TimeTracking.Data
 
 		public void SaveTimeEntry(TimeEntry timeEntry)
 		{
+			// if there's a time entry that doesn't have a time out value
+			// then update it to the new time entry's time in value
+			var lastTimeEntry = (from te in _context.TimeEntries
+								where te.TimeOutUtc == null
+								orderby te.TimeInUtc descending
+								select te).FirstOrDefault();
+			if (lastTimeEntry != null)
+				lastTimeEntry.TimeOutUtc = timeEntry.TimeInUtc;
+				
 			if (timeEntry.TimeEntryId > 0)
-			{
 				_context.Entry(timeEntry).State = System.Data.Entity.EntityState.Modified;
-			}
 			else
-			{
 				_context.TimeEntries.Add(timeEntry);
-			}
+
+			_context.SaveChanges();
+		}
+
+		public void DeleteTimeEntry(int timeEntryId)
+		{
+			var timeEntry = new TimeEntry() { TimeEntryId = timeEntryId };
+			_context.Entry(timeEntry).State = System.Data.Entity.EntityState.Deleted;
 
 			_context.SaveChanges();
 		}

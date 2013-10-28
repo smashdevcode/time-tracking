@@ -40,6 +40,7 @@ else
 	<table>
 		<thead>
 			<tr>
+				<th>&nbsp;</th>
 				<th>Project</th>
 				<th>Task</th>
 				<th>Time In</th>
@@ -53,12 +54,13 @@ else
 			@foreach (var timeEntry in Model.TimeEntries)
 			 {
 				<tr>
+					<td>@Html.ActionLink("Edit", "Edit", new { controller = "TimeEntry", id = timeEntry.TimeEntryId })</td>
 					<td>@timeEntry.ProjectTask.Project.Name</td>
 					<td>@timeEntry.ProjectTask.Name</td>
-					<td>@timeEntry.TimeInUtc</td>
-					<td>@timeEntry.TimeOutUtc</td>
-					<td>@timeEntry.TotalTime</td>
-					<td>@timeEntry.TotalBillableTime</td>
+					<td>@Model.ToLocalDateTimeString(timeEntry.TimeInUtc)</td>
+					<td>@Model.ToLocalDateTimeString(timeEntry.TimeOutUtc)</td>
+					<td>@timeEntry.TotalTimeDisplay</td>
+					<td>@timeEntry.TotalBillableTimeDisplay</td>
 					<td>@timeEntry.Comment</td>
 				</tr>		
 			 }

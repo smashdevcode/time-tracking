@@ -12,11 +12,9 @@ namespace TimeTracking.MvcApplication.ViewModels
 	{
 		public TimeEntryAddViewModel()
 		{
-			// TODO setup collections??? how to also enable ajax calls??? see book example...
-			// setup partial method that renders select input element???
-
-			// TODO set property values
 		}
+
+		public int TimeEntryId { get; set; }
 
 		public List<Project> Projects { get; set; }
 
@@ -31,7 +29,22 @@ namespace TimeTracking.MvcApplication.ViewModels
 
 		// TODO remove???
 
-		//public List<ProjectTask> ProjectTasks { get; set; }
+		private List<ProjectTask> _projectTasks;
+		public List<ProjectTask> ProjectTasks
+		{
+			get { return _projectTasks; }
+			set
+			{
+				_projectTasks = value;
+
+				//// if we have project tasks and the project task id is null
+				//// then set the project task id to the first item in the collection
+				//if (_projectTasks != null && _projectTasks.Count > 0 && ProjectTaskId == null)
+				//{
+				//	ProjectTaskId = value[0].ProjectTaskId;
+				//}
+			}
+		}
 
 		//public IEnumerable<SelectListItem> ProjectTaskItems
 		//{
@@ -102,10 +115,33 @@ namespace TimeTracking.MvcApplication.ViewModels
 		// TODO validate that the time out doesn't come before time in
 		// TODO require the comment if the task requires a comment
 
+		public void SetTimeEntry(TimeEntry timeEntry, User user)
+		{
+			TimeEntryId = timeEntry.TimeEntryId;
+			ProjectId = timeEntry.ProjectTask.ProjectId;
+			ProjectTaskId = timeEntry.ProjectTaskId;
+			Billable = timeEntry.Billable;
+
+			var timeIn = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeEntry.TimeInUtc, "UTC", user.TimeZoneId);
+			TimeInDate = timeIn.Date;
+			TimeInTime = timeIn.TimeOfDay;
+
+			var timeOutUtc = timeEntry.TimeOutUtc;
+			if (timeOutUtc != null)
+			{
+				var timeOut = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeOutUtc.Value, "UTC", user.TimeZoneId);
+				TimeOutDate = timeOut.Date;
+				TimeOutTime = timeOut.TimeOfDay;
+			}
+
+			Comment = timeEntry.Comment;
+		}
+
 		public TimeEntry GetTimeEntry(User user)
 		{
 			return new TimeEntry()
 			{
+				TimeEntryId = this.TimeEntryId,
 				UserId = user.UserId,
 				ProjectTaskId = this.ProjectTaskId.Value,
 				Billable = this.Billable,
