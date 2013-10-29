@@ -23,49 +23,41 @@ namespace TimeTracking.MvcApplication.Controllers
 			// TODO replace with reference to the logged in user
 			var user = _repository.GetUser(1);
 
+			var timeEntryViewModel = new TimeEntryViewModel();
+
 			var projects = _repository.GetProjects(user.UserId);
-			// TODO remove???
-			//var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
-			var timeEntryAddViewModel = new TimeEntryAddViewModel()
-			{
-				Projects = projects,
-				// TODO remove???
-				//ProjectTasks = projectTasks
-			};
-			return View(timeEntryAddViewModel);
+			var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
+			timeEntryViewModel.Projects = projects;
+			timeEntryViewModel.ProjectTasks = projectTasks;
+
+			return View(timeEntryViewModel);
         }
 
 		[HttpPost]
-		public ActionResult Add(TimeEntryAddViewModel timeEntryAddViewModel)
+		public ActionResult Add(TimeEntryViewModel timeEntryViewModel)
 		{
 			// TODO replace with reference to the logged in user
 			var user = _repository.GetUser(1);
 
 			if (ModelState.IsValid)
 			{
-				var timeEntry = timeEntryAddViewModel.GetTimeEntry(user);
+				var timeEntry = timeEntryViewModel.GetTimeEntry(user);
 				_repository.SaveTimeEntry(timeEntry);
 
 				// redirect to the "time in" date
+				var timeInDate = timeEntryViewModel.TimeInDate ?? DateTime.Now;
 				return RedirectToRoute("Date",
-					new { date = timeEntryAddViewModel.TimeInDate.Value.ToString("yyyy-MM-dd") });
+					new { date = timeInDate.ToString("yyyy-MM-dd") });
 			}
 			else
 			{
 				var projects = _repository.GetProjects(user.UserId);
-				timeEntryAddViewModel.Projects = projects;
-				// TODO remove???
-				//var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
-				//timeEntryAddViewModel.ProjectTasks = projectTasks;
+				var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
+				timeEntryViewModel.Projects = projects;
+				timeEntryViewModel.ProjectTasks = projectTasks;
 		
-				return View(timeEntryAddViewModel);
+				return View(timeEntryViewModel);
 			}
-		}
-
-		public ActionResult GetProjectTasks(int id)
-		{
-			var projectTasks = _repository.GetProjectTasks(id);
-			return Json(projectTasks, JsonRequestBehavior.AllowGet);
 		}
 
 		public ActionResult Edit(int id)
@@ -80,43 +72,40 @@ namespace TimeTracking.MvcApplication.Controllers
 				return RedirectToAction("Index", "Home");
 			}
 
+			var timeEntryViewModel = new TimeEntryViewModel();
+
 			var projects = _repository.GetProjects(user.UserId);
-			// TODO remove???
 			var projectTasks = _repository.GetProjectTasks(timeEntry.ProjectTask.ProjectId);
-			var timeEntryAddViewModel = new TimeEntryAddViewModel()
-			{
-				Projects = projects,
-				// TODO remove???
-				ProjectTasks = projectTasks
-			};
-			timeEntryAddViewModel.SetTimeEntry(timeEntry, user);
-			return View(timeEntryAddViewModel);
+			timeEntryViewModel.Projects = projects;
+			timeEntryViewModel.ProjectTasks = projectTasks;
+			timeEntryViewModel.SetTimeEntry(timeEntry, user);
+
+			return View(timeEntryViewModel);
 		}
 
 		[HttpPost]
-		public ActionResult Edit(TimeEntryAddViewModel timeEntryAddViewModel)
+		public ActionResult Edit(TimeEntryViewModel timeEntryViewModel)
 		{
 			// TODO replace with reference to the logged in user
 			var user = _repository.GetUser(1);
 
 			if (ModelState.IsValid)
 			{
-				var timeEntry = timeEntryAddViewModel.GetTimeEntry(user);
+				var timeEntry = timeEntryViewModel.GetTimeEntry(user);
 				_repository.SaveTimeEntry(timeEntry);
 
 				// redirect to the "time in" date
 				return RedirectToRoute("Date", 
-					new { date = timeEntryAddViewModel.TimeInDate.Value.ToString("yyyy-MM-dd") });
+					new { date = timeEntryViewModel.TimeInDate.Value.ToString("yyyy-MM-dd") });
 			}
 			else
 			{
 				var projects = _repository.GetProjects(user.UserId);
-				timeEntryAddViewModel.Projects = projects;
-				// TODO remove???
 				var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
-				timeEntryAddViewModel.ProjectTasks = projectTasks;
+				timeEntryViewModel.Projects = projects;
+				timeEntryViewModel.ProjectTasks = projectTasks;
 
-				return View(timeEntryAddViewModel);
+				return View(timeEntryViewModel);
 			}
 		}
 
@@ -127,5 +116,11 @@ namespace TimeTracking.MvcApplication.Controllers
 
 			return RedirectToAction("Index", "Home");
 		}
-    }
+
+		public ActionResult GetProjectTasks(int id)
+		{
+			var projectTasks = _repository.GetProjectTasks(id);
+			return Json(projectTasks, JsonRequestBehavior.AllowGet);
+		}
+	}
 }

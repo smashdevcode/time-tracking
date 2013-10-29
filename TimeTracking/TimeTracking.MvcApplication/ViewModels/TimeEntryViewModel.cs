@@ -8,9 +8,9 @@ using TimeTracking.Data.Models;
 
 namespace TimeTracking.MvcApplication.ViewModels
 {
-	public class TimeEntryAddViewModel
+	public class TimeEntryViewModel
 	{
-		public TimeEntryAddViewModel()
+		public TimeEntryViewModel()
 		{
 		}
 
