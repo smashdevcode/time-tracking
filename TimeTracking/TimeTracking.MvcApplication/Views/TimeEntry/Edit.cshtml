@@ -16,7 +16,7 @@
         </div>
         <div class="editor-field">
 			@Html.DropDownListFor(model => model.ProjectId, Model.ProjectItems, 
-				new { onchange = "GetProjectTasks();" })
+				new { data_bind = "value: selectedProjectId" })
             @Html.ValidationMessageFor(model => model.ProjectId)
         </div>
 
@@ -26,12 +26,11 @@
         <div class="editor-field">
 			@Html.HiddenFor(model => model.ProjectTaskId, 
 				new { data_bind = "value: selectedProjectTaskId"})
-@*			@Html.DropDownListFor(model => model.ProjectTaskId, Model.ProjectTaskItems, new { data_bind = "options: projectTasks, optionsText: 'Name', optionsValue: 'ProjectTaskId', enable: projectTasks().length > 1, value: selectedProjectTaskId" })*@
             <select data-bind="
 				options: projectTasks, 
 				optionsText: 'Name', 
 				optionsValue: 'ProjectTaskId', 
-				enable: projectTasks().length > 1, 
+				enable: projectTasks() != null && projectTasks().length > 1, 
 				value: selectedProjectTaskId
 			"></select>
 			@Html.ValidationMessageFor(model => model.ProjectTaskId)
@@ -91,43 +90,33 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-@*	@Scripts.Render("~/Scripts/timeentry-add.js")*@
 
-<script type="text/javascript">
+	<script type="text/javascript">
 
-	var viewModel = {
-		projectTasks : ko.observableArray(@Html.Raw(JsonConvert.SerializeObject(Model.ProjectTasks))),
-		selectedProjectTaskId : ko.observable(@Model.ProjectTaskId)
-	};
+		var viewModel = {
+			projectTasks: ko.observableArray(@Html.Raw(JsonConvert.SerializeObject(Model.ProjectTasks))),
+			selectedProjectId : ko.observable(@Model.ProjectId),
+			selectedProjectTaskId : ko.observable(@Model.ProjectTaskId)
+		};
 
-	function GetProjectTasks() {
-		var projectId = $("#ProjectId").val();
-		$.getJSON("/TimeEntry/GetProjectTasks/" + projectId, null, function (data) {
-			viewModel.projectTasks(data);
+		$(document).ready(function () {
+
+			ko.applyBindings(viewModel);
+
+			viewModel.selectedProjectId.subscribe(function (newProjectId) {
+				$.getJSON("/TimeEntry/GetProjectTasks", { "id" : newProjectId }, function (data) {
+					viewModel.projectTasks(data);
+				});
+			});
+
+			$("#DeleteTimeEntry").click(function () {
+				if (confirm("Are you sure you want to delete this time entry?")) {
+					$("#DeleteTimeEntryForm").submit();
+				}
+			});
+
 		});
-	}
 
-	$(document).ready(function () {
-		ko.applyBindings(viewModel);
-
-		// TODO switch to this approach with handling a change in value in ProjectId???
-
-		//viewModel.selectedProjectTaskId.subscribe(function (newSourceMaterialType) {
-		//	$.getJSON("/IngredientType/FindByMaterialType",
-		//			  { "id": newSourceMaterialType })
-		//		.success(function (data) {
-		//			viewModel.ingredientTypes($.parseJSON(data));
-		//		})
-		//		.error(function () { alert("error"); });
-		//});
-
-		$("#DeleteTimeEntry").click(function () {
-			if (confirm("Are you sure you want to delete this time entry?")) {
-				$("#DeleteTimeEntryForm").submit();
-			}
-		});
-	});
-
-</script>
+	</script>
 
 }

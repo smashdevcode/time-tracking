@@ -46,7 +46,9 @@ namespace TimeTracking.MvcApplication.Controllers
 				var timeEntry = timeEntryAddViewModel.GetTimeEntry(user);
 				_repository.SaveTimeEntry(timeEntry);
 
-				return RedirectToAction("Index", "Home");
+				// redirect to the "time in" date
+				return RedirectToRoute("Date",
+					new { date = timeEntryAddViewModel.TimeInDate.Value.ToString("yyyy-MM-dd") });
 			}
 			else
 			{
@@ -102,7 +104,9 @@ namespace TimeTracking.MvcApplication.Controllers
 				var timeEntry = timeEntryAddViewModel.GetTimeEntry(user);
 				_repository.SaveTimeEntry(timeEntry);
 
-				return RedirectToAction("Index", "Home");
+				// redirect to the "time in" date
+				return RedirectToRoute("Date", 
+					new { date = timeEntryAddViewModel.TimeInDate.Value.ToString("yyyy-MM-dd") });
 			}
 			else
 			{
