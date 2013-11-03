@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using TimeTracking.Data;
 using TimeTracking.Data.Models;
+using TimeTracking.MvcApplication.Infrastructure;
 using TimeTracking.MvcApplication.ViewModels;
 
 namespace TimeTracking.MvcApplication.Controllers
@@ -20,28 +21,15 @@ namespace TimeTracking.MvcApplication.Controllers
 
 		public ActionResult Add()
         {
-			// TODO replace with reference to the logged in user
-			var user = _repository.GetUser(1);
-
-			var timeEntryViewModel = new TimeEntryViewModel();
-
-			var projects = _repository.GetProjects(user.UserId);
-			var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
-			timeEntryViewModel.Projects = projects;
-			timeEntryViewModel.ProjectTasks = projectTasks;
-
-			return View(timeEntryViewModel);
+			return View(new TimeEntryViewModel());
         }
 
 		[HttpPost]
 		public ActionResult Add(TimeEntryViewModel timeEntryViewModel)
 		{
-			// TODO replace with reference to the logged in user
-			var user = _repository.GetUser(1);
-
 			if (ModelState.IsValid)
 			{
-				var timeEntry = timeEntryViewModel.GetTimeEntry(user);
+				var timeEntry = timeEntryViewModel.GetTimeEntry();
 				_repository.SaveTimeEntry(timeEntry);
 
 				// redirect to the "time in" date
@@ -51,20 +39,12 @@ namespace TimeTracking.MvcApplication.Controllers
 			}
 			else
 			{
-				var projects = _repository.GetProjects(user.UserId);
-				var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
-				timeEntryViewModel.Projects = projects;
-				timeEntryViewModel.ProjectTasks = projectTasks;
-		
 				return View(timeEntryViewModel);
 			}
 		}
 
 		public ActionResult Edit(int id)
 		{
-			// TODO replace with reference to the logged in user
-			var user = _repository.GetUser(1);
-
 			var timeEntry = _repository.GetTimeEntry(id);
 			// if we didn't get a time entry back, redirect the user back to the home page
 			if (timeEntry == null)
@@ -72,26 +52,15 @@ namespace TimeTracking.MvcApplication.Controllers
 				return RedirectToAction("Index", "Home");
 			}
 
-			var timeEntryViewModel = new TimeEntryViewModel();
-
-			var projects = _repository.GetProjects(user.UserId);
-			var projectTasks = _repository.GetProjectTasks(timeEntry.ProjectTask.ProjectId);
-			timeEntryViewModel.Projects = projects;
-			timeEntryViewModel.ProjectTasks = projectTasks;
-			timeEntryViewModel.SetTimeEntry(timeEntry, user);
-
-			return View(timeEntryViewModel);
+			return View(new TimeEntryViewModel(timeEntry));
 		}
 
 		[HttpPost]
 		public ActionResult Edit(TimeEntryViewModel timeEntryViewModel)
 		{
-			// TODO replace with reference to the logged in user
-			var user = _repository.GetUser(1);
-
 			if (ModelState.IsValid)
 			{
-				var timeEntry = timeEntryViewModel.GetTimeEntry(user);
+				var timeEntry = timeEntryViewModel.GetTimeEntry();
 				_repository.SaveTimeEntry(timeEntry);
 
 				// redirect to the "time in" date
@@ -100,11 +69,6 @@ namespace TimeTracking.MvcApplication.Controllers
 			}
 			else
 			{
-				var projects = _repository.GetProjects(user.UserId);
-				var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
-				timeEntryViewModel.Projects = projects;
-				timeEntryViewModel.ProjectTasks = projectTasks;
-
 				return View(timeEntryViewModel);
 			}
 		}

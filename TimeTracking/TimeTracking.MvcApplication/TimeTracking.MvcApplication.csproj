@@ -135,7 +135,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\CurrentUser.cs" />
     <Compile Include="Infrastructure\DateTimeExtensionMethods.cs" />
+    <Compile Include="Infrastructure\ICurrentUser.cs" />
     <Compile Include="Infrastructure\NinjectDependencyResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\HomeIndexViewModel.cs" />

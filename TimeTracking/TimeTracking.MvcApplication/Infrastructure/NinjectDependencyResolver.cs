@@ -23,6 +23,7 @@ namespace TimeTracking.MvcApplication.Infrastructure
 		private void AddBindings()
 		{
 			_kernel.Bind<IRepository>().To<Repository>();
+			_kernel.Bind<ICurrentUser>().To<CurrentUser>();
 		}
 
 		public object GetService(Type serviceType)

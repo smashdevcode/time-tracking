@@ -4,14 +4,31 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using TimeTracking.Data;
 using TimeTracking.Data.Models;
+using TimeTracking.MvcApplication.Infrastructure;
 
 namespace TimeTracking.MvcApplication.ViewModels
 {
 	public class TimeEntryViewModel
 	{
+		private IRepository _repository;
+		private ICurrentUser _currentUser;
+
 		public TimeEntryViewModel()
 		{
+			_repository = DependencyResolver.Current.GetService<IRepository>();
+			_currentUser = DependencyResolver.Current.GetService<ICurrentUser>();
+
+			var projects = _repository.GetProjects(_currentUser.UserId);
+			var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
+			Projects = projects;
+			ProjectTasks = projectTasks;
+		}
+
+		public TimeEntryViewModel(TimeEntry timeEntry) : this()
+		{
+			SetTimeEntry(timeEntry);
 		}
 
 		public int TimeEntryId { get; set; }
@@ -117,21 +134,21 @@ namespace TimeTracking.MvcApplication.ViewModels
 		// TODO validate that the time out doesn't come before time in
 		// TODO require the comment if the task requires a comment
 
-		public void SetTimeEntry(TimeEntry timeEntry, User user)
+		public void SetTimeEntry(TimeEntry timeEntry)
 		{
 			TimeEntryId = timeEntry.TimeEntryId;
 			ProjectId = timeEntry.ProjectTask.ProjectId;
 			ProjectTaskId = timeEntry.ProjectTaskId;
 			Billable = timeEntry.Billable;
 
-			var timeIn = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeEntry.TimeInUtc, "UTC", user.TimeZoneId);
+			var timeIn = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeEntry.TimeInUtc, "UTC", _currentUser.User.TimeZoneId);
 			TimeInDate = timeIn.Date;
 			TimeInTime = new DateTime(timeIn.TimeOfDay.Ticks);
 
 			var timeOutUtc = timeEntry.TimeOutUtc;
 			if (timeOutUtc != null)
 			{
-				var timeOut = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeOutUtc.Value, "UTC", user.TimeZoneId);
+				var timeOut = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeOutUtc.Value, "UTC", _currentUser.User.TimeZoneId);
 				TimeOutDate = timeOut.Date;
 				TimeOutTime = new DateTime(timeOut.TimeOfDay.Ticks);
 			}
@@ -139,19 +156,19 @@ namespace TimeTracking.MvcApplication.ViewModels
 			Comment = timeEntry.Comment;
 		}
 
-		public TimeEntry GetTimeEntry(User user)
+		public TimeEntry GetTimeEntry()
 		{
 			return new TimeEntry()
 			{
 				TimeEntryId = this.TimeEntryId,
-				UserId = user.UserId,
+				UserId = _currentUser.User.UserId,
 				ProjectTaskId = this.ProjectTaskId.Value,
 				Billable = this.Billable,
-				TimeInUtc = this.TimeIn != null ? 
-					TimeZoneInfo.ConvertTimeBySystemTimeZoneId(this.TimeIn.Value, user.TimeZoneId, "UTC") : 
+				TimeInUtc = this.TimeIn != null ?
+					TimeZoneInfo.ConvertTimeBySystemTimeZoneId(this.TimeIn.Value, _currentUser.User.TimeZoneId, "UTC") : 
 					DateTime.UtcNow,
 				TimeOutUtc = this.TimeOut != null ?
-					TimeZoneInfo.ConvertTimeBySystemTimeZoneId(this.TimeOut.Value, user.TimeZoneId, "UTC") :
+					TimeZoneInfo.ConvertTimeBySystemTimeZoneId(this.TimeOut.Value, _currentUser.User.TimeZoneId, "UTC") :
 					(DateTime?)null,
 				Comment = this.Comment
 			};
