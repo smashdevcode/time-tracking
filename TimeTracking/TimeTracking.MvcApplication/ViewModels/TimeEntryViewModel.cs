@@ -63,7 +63,8 @@ namespace TimeTracking.MvcApplication.ViewModels
 		public DateTime? TimeInDate { get; set; }
 
 		[DataType(DataType.Time)]
-		public TimeSpan? TimeInTime { get; set; }
+		[DisplayFormat(DataFormatString = "{0:hh\\:mm tt}", ApplyFormatInEditMode = true)]
+		public DateTime? TimeInTime { get; set; }
 
 		public DateTime? TimeIn
 		{
@@ -73,7 +74,7 @@ namespace TimeTracking.MvcApplication.ViewModels
 				var timeInTime = TimeInTime;
 				if (timeInDate != null && timeInTime != null)
 				{
-					return timeInDate.Value.Add(timeInTime.Value);
+					return timeInDate.Value.Add(timeInTime.Value.TimeOfDay);
 				}
 				else
 				{
@@ -87,7 +88,8 @@ namespace TimeTracking.MvcApplication.ViewModels
 		public DateTime? TimeOutDate { get; set; }
 
 		[DataType(DataType.Time)]
-		public TimeSpan? TimeOutTime { get; set; }
+		[DisplayFormat(DataFormatString = "{0:hh\\:mm tt}", ApplyFormatInEditMode = true)]
+		public DateTime? TimeOutTime { get; set; }
 
 		public DateTime? TimeOut
 		{
@@ -97,7 +99,7 @@ namespace TimeTracking.MvcApplication.ViewModels
 				var timeOutTime = TimeOutTime;
 				if (timeOutDate != null && timeOutTime != null)
 				{
-					return timeOutDate.Value.Add(timeOutTime.Value);
+					return timeOutDate.Value.Add(timeOutTime.Value.TimeOfDay);
 				}
 				else
 				{
@@ -124,14 +126,14 @@ namespace TimeTracking.MvcApplication.ViewModels
 
 			var timeIn = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeEntry.TimeInUtc, "UTC", user.TimeZoneId);
 			TimeInDate = timeIn.Date;
-			TimeInTime = timeIn.TimeOfDay;
+			TimeInTime = new DateTime(timeIn.TimeOfDay.Ticks);
 
 			var timeOutUtc = timeEntry.TimeOutUtc;
 			if (timeOutUtc != null)
 			{
 				var timeOut = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeOutUtc.Value, "UTC", user.TimeZoneId);
 				TimeOutDate = timeOut.Date;
-				TimeOutTime = timeOut.TimeOfDay;
+				TimeOutTime = new DateTime(timeOut.TimeOfDay.Ticks);
 			}
 
 			Comment = timeEntry.Comment;
