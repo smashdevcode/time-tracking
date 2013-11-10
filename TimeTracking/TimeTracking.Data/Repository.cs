@@ -66,7 +66,8 @@ namespace TimeTracking.Data
 			// if there's a time entry that doesn't have a time out value
 			// then update it to the new time entry's time in value
 			var lastTimeEntry = (from te in _context.TimeEntries
-								where te.TimeEntryId != timeEntry.TimeEntryId && te.TimeOutUtc == null
+								where te.TimeEntryId != timeEntry.TimeEntryId && te.TimeOutUtc == null && 
+									te.TimeInUtc < timeEntry.TimeInUtc
 								orderby te.TimeInUtc descending
 								select te).FirstOrDefault();
 			if (lastTimeEntry != null)

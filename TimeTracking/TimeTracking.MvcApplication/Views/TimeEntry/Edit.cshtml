@@ -94,7 +94,9 @@
 	<script type="text/javascript">
 
 		var viewModel = {
-			projectTasks: ko.observableArray(@Html.Raw(JsonConvert.SerializeObject(Model.ProjectTasks))),
+			projectTasks: ko.observableArray(@Html.Raw(JsonConvert.SerializeObject(Model.ProjectTasks
+				.Select(pt => new { ProjectTaskId = pt.ProjectTaskId, Name = pt.Name })
+				.ToList()))),
 			selectedProjectId : ko.observable(@Model.ProjectId),
 			selectedProjectTaskId : ko.observable(@Model.ProjectTaskId)
 		};
