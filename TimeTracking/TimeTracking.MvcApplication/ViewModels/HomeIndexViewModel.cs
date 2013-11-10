@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
+using TimeTracking.Data;
 using TimeTracking.Data.Models;
 using TimeTracking.MvcApplication.Infrastructure;
 
 namespace TimeTracking.MvcApplication.ViewModels
 {
-	public class HomeIndexViewModel
+	public class HomeIndexViewModel : ViewModelBase
 	{
-		public HomeIndexViewModel(DateTime date, List<TimeEntry> timeEntries, User user)
+		public HomeIndexViewModel(DateTime? date) : base()
 		{
-			Date = date;
-			WeekOf = date.GetStartOfWeek();
-			TimeEntries = timeEntries;
-			User = user;
+			if (date == null)
+				date = _currentUser.User.ConvertUtcToLocalTime(DateTime.UtcNow).Date;
+
+			Date = date.Value;
+			WeekOf = date.Value.GetStartOfWeek();
+			TimeEntries = _repository.GetTimeEntries(date.Value, _currentUser.User);
 
 			var dates = new List<DateTime>();
 			for (var i = 0; i < 7; i++)
@@ -31,14 +35,13 @@ namespace TimeTracking.MvcApplication.ViewModels
 		public DateTime PreviousWeek { get; set; }
 		public DateTime NextWeek { get; set; }
 		public List<TimeEntry> TimeEntries { get; set; }
-		public User User { get; set; }
 
 		public string ToLocalDateTimeString(DateTime? utc, string formatString = "hh:mm tt", 
 			string defaultString = "N/A")
 		{
 			if (utc != null)
 			{
-				return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utc.Value, "UTC", User.TimeZoneId).ToString(formatString);
+				return _currentUser.User.ConvertUtcToLocalTime(utc.Value).ToString(formatString);
 			}
 			else
 			{

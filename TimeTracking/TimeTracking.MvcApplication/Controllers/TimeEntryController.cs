@@ -10,15 +10,8 @@ using TimeTracking.MvcApplication.ViewModels;
 
 namespace TimeTracking.MvcApplication.Controllers
 {
-    public class TimeEntryController : Controller
+    public class TimeEntryController : ControllerBase
     {
-		private IRepository _repository;
-
-		public TimeEntryController(IRepository repository)
-		{
-			_repository = repository;
-		}
-
 		public ActionResult Add()
         {
 			return View(new TimeEntryViewModel());
@@ -29,30 +22,23 @@ namespace TimeTracking.MvcApplication.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var timeEntry = timeEntryViewModel.GetTimeEntry();
-				_repository.SaveTimeEntry(timeEntry);
-
-				// redirect to the "time in" date
-				var timeInDate = timeEntryViewModel.TimeInDate ?? DateTime.Now;
-				return RedirectToRoute("Date",
-					new { date = timeInDate.ToString("yyyy-MM-dd") });
+				return timeEntryViewModel.Save();
 			}
 			else
 			{
 				return View(timeEntryViewModel);
-			}
+			}	
 		}
 
 		public ActionResult Edit(int id)
 		{
-			var timeEntry = _repository.GetTimeEntry(id);
-			// if we didn't get a time entry back, redirect the user back to the home page
-			if (timeEntry == null)
-			{
-				return RedirectToAction("Index", "Home");
-			}
+			var viewModel = new TimeEntryViewModel(id);
 
-			return View(new TimeEntryViewModel(timeEntry));
+			// if we didn't get a model back, redirect the user back to the home page
+			if (!viewModel.HasModel)
+				return RedirectToAction("Index", "Home");
+
+			return View(viewModel);
 		}
 
 		[HttpPost]
@@ -60,12 +46,7 @@ namespace TimeTracking.MvcApplication.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var timeEntry = timeEntryViewModel.GetTimeEntry();
-				_repository.SaveTimeEntry(timeEntry);
-
-				// redirect to the "time in" date
-				return RedirectToRoute("Date", 
-					new { date = timeEntryViewModel.TimeInDate.Value.ToString("yyyy-MM-dd") });
+				return timeEntryViewModel.Save();
 			}
 			else
 			{

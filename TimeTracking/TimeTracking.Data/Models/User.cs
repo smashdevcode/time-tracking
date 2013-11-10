@@ -22,5 +22,15 @@ namespace TimeTracking.Data.Models
 		[Required]
 		[MaxLength(100)]
 		public string TimeZoneId { get; set; }
+
+		public DateTime ConvertUtcToLocalTime(DateTime utcDateTime)
+		{
+			return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(utcDateTime, "UTC", TimeZoneId);
+		}
+
+		public DateTime ConvertLocalTimeToUtc(DateTime localDateTime)
+		{
+			return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(localDateTime, TimeZoneId, "UTC");
+		}
 	}
 }

@@ -10,30 +10,33 @@ using TimeTracking.MvcApplication.Infrastructure;
 
 namespace TimeTracking.MvcApplication.ViewModels
 {
-	public class TimeEntryViewModel
+	public class TimeEntryViewModel : ViewModelBase
 	{
-		private IRepository _repository;
-		private ICurrentUser _currentUser;
-
-		public TimeEntryViewModel()
+		public TimeEntryViewModel() : base()
 		{
-			_repository = DependencyResolver.Current.GetService<IRepository>();
-			_currentUser = DependencyResolver.Current.GetService<ICurrentUser>();
-
-			var projects = _repository.GetProjects(_currentUser.UserId);
-			var projectTasks = _repository.GetProjectTasks(projects[0].ProjectId);
-			Projects = projects;
-			ProjectTasks = projectTasks;
 		}
 
-		public TimeEntryViewModel(TimeEntry timeEntry) : this()
+		public TimeEntryViewModel(int id) : this()
 		{
-			SetTimeEntry(timeEntry);
+			var timeEntry = _repository.GetTimeEntry(id);
+			if (timeEntry != null)
+				SetTimeEntry(timeEntry);
 		}
 
 		public int TimeEntryId { get; set; }
 
-		public List<Project> Projects { get; set; }
+		public bool HasModel { get { return TimeEntryId > 0; } }
+
+		private List<Project> _projects;
+		public List<Project> Projects
+		{
+			get
+			{
+				if (_projects == null)
+					_projects = _repository.GetProjects(_currentUser.UserId);
+				return _projects;
+			}
+		}
 
 		public IEnumerable<SelectListItem> ProjectItems
 		{
@@ -44,29 +47,26 @@ namespace TimeTracking.MvcApplication.ViewModels
 		[Required(ErrorMessage="Please select a value for 'Project'")]
 		public int? ProjectId { get; set; }
 
-		// TODO remove???
-
 		private List<ProjectTask> _projectTasks;
 		public List<ProjectTask> ProjectTasks
 		{
-			get { return _projectTasks; }
-			set
+			get
 			{
-				_projectTasks = value;
+				if (_projectTasks == null)
+				{
+					// give preference to the project ID property if it has a value
+					// otherwise grab the first project's ID (as long as we have a collection of projects)
+					var projectId = ProjectId;
+					if (projectId == null && _projects != null && _projects.Count > 0)
+						projectId = _projects[0].ProjectId;
 
-				//// if we have project tasks and the project task id is null
-				//// then set the project task id to the first item in the collection
-				//if (_projectTasks != null && _projectTasks.Count > 0 && ProjectTaskId == null)
-				//{
-				//	ProjectTaskId = value[0].ProjectTaskId;
-				//}
+					if (projectId != null)
+						_projectTasks = _repository.GetProjectTasks(projectId.Value);
+				}
+				
+				return _projectTasks;
 			}
 		}
-
-		//public IEnumerable<SelectListItem> ProjectTaskItems
-		//{
-		//	get { return new SelectList(ProjectTasks, "ProjectTaskId", "Name"); }
-		//}
 
 		[Display(Name = "Project Task")]
 		[Required(ErrorMessage = "Please select a value for 'Task'")]
@@ -141,14 +141,14 @@ namespace TimeTracking.MvcApplication.ViewModels
 			ProjectTaskId = timeEntry.ProjectTaskId;
 			Billable = timeEntry.Billable;
 
-			var timeIn = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeEntry.TimeInUtc, "UTC", _currentUser.User.TimeZoneId);
+			var timeIn = _currentUser.User.ConvertUtcToLocalTime(timeEntry.TimeInUtc);
 			TimeInDate = timeIn.Date;
 			TimeInTime = new DateTime(timeIn.TimeOfDay.Ticks);
 
 			var timeOutUtc = timeEntry.TimeOutUtc;
 			if (timeOutUtc != null)
 			{
-				var timeOut = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(timeOutUtc.Value, "UTC", _currentUser.User.TimeZoneId);
+				var timeOut = _currentUser.User.ConvertUtcToLocalTime(timeOutUtc.Value);
 				TimeOutDate = timeOut.Date;
 				TimeOutTime = new DateTime(timeOut.TimeOfDay.Ticks);
 			}
@@ -158,20 +158,37 @@ namespace TimeTracking.MvcApplication.ViewModels
 
 		public TimeEntry GetTimeEntry()
 		{
+			// If we are ading a new record, then time in could be null.
+			// If it is, go ahead and set a default value.
+			if (TimeIn == null)
+			{
+				var timeIn = _currentUser.User.ConvertUtcToLocalTime(DateTime.UtcNow);
+				TimeInDate = timeIn.Date;
+				TimeInTime = new DateTime(timeIn.TimeOfDay.Ticks);
+			}
+
 			return new TimeEntry()
 			{
 				TimeEntryId = this.TimeEntryId,
 				UserId = _currentUser.User.UserId,
 				ProjectTaskId = this.ProjectTaskId.Value,
 				Billable = this.Billable,
-				TimeInUtc = this.TimeIn != null ?
-					TimeZoneInfo.ConvertTimeBySystemTimeZoneId(this.TimeIn.Value, _currentUser.User.TimeZoneId, "UTC") : 
-					DateTime.UtcNow,
+				TimeInUtc = _currentUser.User.ConvertLocalTimeToUtc(this.TimeIn.Value),
 				TimeOutUtc = this.TimeOut != null ?
-					TimeZoneInfo.ConvertTimeBySystemTimeZoneId(this.TimeOut.Value, _currentUser.User.TimeZoneId, "UTC") :
+					_currentUser.User.ConvertLocalTimeToUtc(this.TimeOut.Value) :
 					(DateTime?)null,
 				Comment = this.Comment
 			};
+		}
+
+		public ActionResult Save()
+		{
+			var timeEntry = GetTimeEntry();
+			_repository.SaveTimeEntry(timeEntry);
+
+			// redirect to the "time in" date
+			return new RedirectToRouteResult("Date", new System.Web.Routing.RouteValueDictionary(
+				new { date = TimeInDate.Value.ToString("yyyy-MM-dd") }));
 		}
 	}
 }

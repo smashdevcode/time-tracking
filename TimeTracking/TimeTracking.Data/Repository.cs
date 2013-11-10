@@ -49,7 +49,7 @@ namespace TimeTracking.Data
 
 		public List<TimeEntry> GetTimeEntries(DateTime date, User user)
 		{
-			var dateUtcStart = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(date, user.TimeZoneId, "UTC");
+			var dateUtcStart = user.ConvertLocalTimeToUtc(date);
 			var dateUtcEnd = dateUtcStart.AddDays(1);
 
 			return _context.TimeEntries
