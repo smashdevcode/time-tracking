@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,10 +15,13 @@ namespace TimeTracking.MvcApplication.ViewModels
 	{
 		public TimeEntryViewModel() : base()
 		{
+			Mode = ViewMode.Add;
 		}
 
 		public TimeEntryViewModel(int id) : this()
 		{
+			Mode = ViewMode.Edit;
+
 			var timeEntry = _repository.GetTimeEntry(id);
 			if (timeEntry != null)
 				SetTimeEntry(timeEntry);
@@ -65,6 +69,22 @@ namespace TimeTracking.MvcApplication.ViewModels
 				}
 				
 				return _projectTasks;
+			}
+		}
+
+		public string ProjectTasksJson
+		{
+			get
+			{
+				var projectTasksJson = string.Empty;
+				var projectTasks = ProjectTasks;
+				if (projectTasks != null && projectTasks.Count > 0)
+				{
+					projectTasksJson = JsonConvert.SerializeObject(projectTasks
+						.Select(pt => new { ProjectTaskId = pt.ProjectTaskId, Name = pt.Name })
+						.ToList());
+				}
+				return projectTasksJson;
 			}
 		}
 

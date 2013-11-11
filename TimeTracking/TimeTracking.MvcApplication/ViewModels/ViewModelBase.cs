@@ -10,6 +10,12 @@ namespace TimeTracking.MvcApplication.ViewModels
 {
 	public abstract class ViewModelBase
 	{
+		public enum ViewMode
+		{
+			Add,
+			Edit
+		}
+
 		protected IRepository _repository;
 		protected ICurrentUser _currentUser;
 
@@ -18,5 +24,7 @@ namespace TimeTracking.MvcApplication.ViewModels
 			_repository = DependencyResolver.Current.GetService<IRepository>();
 			_currentUser = DependencyResolver.Current.GetService<ICurrentUser>();
 		}
+
+		public ViewMode Mode { get; set; }
 	}
 }

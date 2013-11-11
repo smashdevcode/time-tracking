@@ -1,109 +1,12 @@
 ﻿@model TimeTracking.MvcApplication.ViewModels.TimeEntryViewModel
-@using Newtonsoft.Json
 
 @{
     ViewBag.Title = "Add Time Entry";
 }
 
-@using (Html.BeginForm()) {
-	@Html.ValidationSummary(true)
-
-    <fieldset>
-        <legend>Time Entry Information</legend>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.ProjectId)
-        </div>
-        <div class="editor-field">
-			@Html.DropDownListFor(model => model.ProjectId, Model.ProjectItems, 
-				new { data_bind = "value: selectedProjectId" })
-            @Html.ValidationMessageFor(model => model.ProjectId)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.ProjectTaskId)
-        </div>
-        <div class="editor-field">
-			@Html.HiddenFor(model => model.ProjectTaskId, 
-				new { data_bind = "value: selectedProjectTaskId"})
-            <select data-bind="
-				options: projectTasks, 
-				optionsText: 'Name', 
-				optionsValue: 'ProjectTaskId', 
-				enable: projectTasks() != null && projectTasks().length > 1, 
-				value: selectedProjectTaskId
-			"></select>
-			@Html.ValidationMessageFor(model => model.ProjectTaskId)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Billable)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Billable)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.TimeInDate)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.TimeInDate)
-            @Html.EditorFor(model => model.TimeInTime)
-            @Html.ValidationMessageFor(model => model.TimeInDate)
-            @Html.ValidationMessageFor(model => model.TimeInTime)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.TimeOutDate)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.TimeOutDate)
-            @Html.EditorFor(model => model.TimeOutTime)
-            @Html.ValidationMessageFor(model => model.TimeOutDate)
-            @Html.ValidationMessageFor(model => model.TimeOutTime)
-        </div>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Comment)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Comment)
-            @Html.ValidationMessageFor(model => model.Comment)
-        </div>
-
-        <p>
-            <input type="submit" value="Add" />
-        </p>
-    </fieldset>
-}
-
-<div>
-    @Html.ActionLink("Back to Home", "Index", "Home")
-</div>
+@{ Html.RenderPartial("Form"); }
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-
-	<script type="text/javascript">
-
-		var viewModel = {
-			projectTasks: ko.observableArray(@Html.Raw(JsonConvert.SerializeObject(Model.ProjectTasks))),
-			selectedProjectId: ko.observable(@Model.ProjectId),
-			selectedProjectTaskId: ko.observable(@Model.ProjectTaskId)
-		};
-
-		$(document).ready(function () {
-
-			ko.applyBindings(viewModel);
-
-			viewModel.selectedProjectId.subscribe(function (newProjectId) {
-				$.getJSON("/TimeEntry/GetProjectTasks", { "id": newProjectId }, function (data) {
-					viewModel.projectTasks(data);
-				});
-			});
-
-		});
-
-	</script>
-
+	@Scripts.Render("~/Scripts/time-entry.js")
 }
