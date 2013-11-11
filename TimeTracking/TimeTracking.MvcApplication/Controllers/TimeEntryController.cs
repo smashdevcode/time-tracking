@@ -65,7 +65,7 @@ namespace TimeTracking.MvcApplication.Controllers
 		public ActionResult GetProjectTasks(int id)
 		{
 			var projectTasks = _repository.GetProjectTasks(id)
-				.Select(pt => new { ProjectTaskId = pt.ProjectTaskId, Name = pt.Name })
+				.Select(pt => new { ProjectTaskId = pt.ProjectTaskId, Name = pt.Name, Billable = pt.Billable })
 				.ToList();
 			return Json(projectTasks, JsonRequestBehavior.AllowGet);
 		}

@@ -36,7 +36,8 @@
             @Html.LabelFor(model => model.Billable)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Billable)
+            @Html.CheckBoxFor(model => model.Billable,
+				new { data_bind = "checked: isBillable" })
         </div>
 
         <div class="editor-label">

@@ -81,7 +81,7 @@ namespace TimeTracking.MvcApplication.ViewModels
 				if (projectTasks != null && projectTasks.Count > 0)
 				{
 					projectTasksJson = JsonConvert.SerializeObject(projectTasks
-						.Select(pt => new { ProjectTaskId = pt.ProjectTaskId, Name = pt.Name })
+						.Select(pt => new { ProjectTaskId = pt.ProjectTaskId, Name = pt.Name, Billable = pt.Billable })
 						.ToList());
 				}
 				return projectTasksJson;
