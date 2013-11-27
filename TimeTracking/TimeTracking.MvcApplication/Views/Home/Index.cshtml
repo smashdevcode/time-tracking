@@ -4,7 +4,7 @@
     ViewBag.Title = "Home";
 }
 
-<p>@Html.ActionLink("Add Time Entry", "Add", "TimeEntry")</p>
+<p><a class="btn btn-lg btn-success" href="@Url.Action("Add", "TimeEntry")"><span class="glyphicon glyphicon-plus"></span> Add Time Entry</a></p>
 
 <h3>Week of @Model.WeekOf.ToString("MM/dd/yyyy")</h3>
 
