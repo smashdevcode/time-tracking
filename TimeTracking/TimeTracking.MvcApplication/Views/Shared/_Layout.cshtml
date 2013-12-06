@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,27 +9,47 @@
 </head>
 <body>
 
-	<div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-			<span class="sr-only">Toggle navigation</span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			</button>
-			@Html.ActionLink("Time Tracking", "Index", "Home", new { }, new { @class = "navbar-brand" })
-		</div>
-		<div class="collapse navbar-collapse">
-			<ul class="nav navbar-nav">
-			<li class="active">@Html.ActionLink("Home", "Index", "Home")</li>
-			<li>@Html.ActionLink("Projects", "Index", "Project")</li>
-			</ul>
+	<div class="navbar navbar-static-top navbar-inverse" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				@Html.ActionLink("Time Tracking", "Index", "Home", new { }, new { @class = "navbar-brand" })
+			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					@Html.BootstrapMenuItem("Home", "Index", "Home")
+					@Html.BootstrapMenuItem("Projects", "Index", "Project")
+				</ul>
+			</div>
 		</div>
 	</div>
 
-	<h2>@ViewBag.Title</h2>
+	<div class="container">
 
-    @RenderBody()
+		<div class="row">
+
+			<div class="col-md-9">
+
+				<h2>@ViewBag.Title</h2>
+	
+				@RenderBody()
+
+			</div>
+
+			<div class="col-md-3 secondary">
+
+				@RenderSection("secondary", required: false)
+
+			</div>
+
+		</div>
+
+	</div>
 
     @Scripts.Render("~/bundles/jquery", "~/bundles/bootstrap", "~/bundles/knockout")
 	<script src="~/Scripts/site.js"></script>

@@ -4,40 +4,21 @@
     ViewBag.Title = "Home";
 }
 
-<p><a class="btn btn-lg btn-success" href="@Url.Action("Add", "TimeEntry")"><span class="glyphicon glyphicon-plus"></span> Add Time Entry</a></p>
-
-<h3>Week of @Model.WeekOf.ToString("MM/dd/yyyy")</h3>
-
-<ul>
-	@foreach (var date in Model.Dates)
-	 {
-		 if (date == Model.Date)
-		 {
-			 <li>@date.ToString("MM/dd dddd")</li>
-		 }
-		 else
-		 {
-			 <li>@Html.RouteLink(date.ToString("MM/dd dddd"), "Date", 
-					new { date = date.ToString("yyyy-MM-dd") })</li>
-		 }
-	 }
-</ul>
-
-<p>@Html.RouteLink("Previous Week", "Date", 
-	new { date = Model.PreviousWeek.ToString("yyyy-MM-dd") })</p>
-
-<p>@Html.RouteLink("Next Week", "Date", 
-	new { date = Model.NextWeek.ToString("yyyy-MM-dd") })</p>
+<p>@Html.BootstrapLinkButton("Add Time Entry", "Add", "TimeEntry", 
+	BootstrapGlyphiconType.Plus, 
+	false,
+	BootstrapButtonStyle.Success, 
+	BootstrapButtonSize.Large)</p>
 
 <h3>Time Entries for @Model.Date.ToString("MM/dd/yyyy")</h3>
 
 @if (Model.TimeEntries.Count == 0)
 {
-	<p>There are no time entries for this day.</p>
+	<p class="text-info">There are no time entries for this day.</p>
 }
 else
 {
-	<table>
+	<table class="table table-striped table-hover">
 		<thead>
 			<tr>
 				<th>&nbsp;</th>
@@ -66,4 +47,42 @@ else
 			 }
 		</tbody>
 	</table>
+}
+
+@section Secondary {
+
+	<h3>Week of @Model.WeekOf.ToString("MM/dd/yyyy")</h3>
+
+	<ul>
+		@foreach (var date in Model.Dates)
+		 {
+			 if (date == Model.Date)
+			 {
+				 <li>@date.ToString("MM/dd dddd")</li>
+			 }
+			 else
+			 {
+				 <li>@Html.RouteLink(date.ToString("MM/dd dddd"), "Date", 
+						new { date = date.ToString("yyyy-MM-dd") })</li>
+			 }
+		 }
+	</ul>
+
+	<div class="row">
+		<div class="col-xs-2">
+		</div>
+		<div class="col-xs-4">
+			@Html.BootstrapLinkButton("", "Date", 
+				new { date = Model.PreviousWeek.ToString("yyyy-MM-dd") }, 
+				BootstrapGlyphiconType.StepBackward, true)
+		</div>
+		<div class="col-xs-4">
+			@Html.BootstrapLinkButton("", "Date", 
+				new { date = Model.NextWeek.ToString("yyyy-MM-dd") },
+				BootstrapGlyphiconType.StepForward, true)
+		</div>
+		<div class="col-xs-2">
+		</div>
+	</div>
+
 }
