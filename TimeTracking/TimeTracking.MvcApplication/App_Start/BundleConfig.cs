@@ -46,8 +46,7 @@ namespace TimeTracking.MvcApplication
 						"~/Content/themes/base/jquery.ui.theme.css"));
 
 			bundles.Add(new StyleBundle("~/Content/bootstrapcss").Include(
-						"~/Content/bootstrap.css",
-						"~/Content/boostrap-theme.css"));
+						"~/Content/bootstrap-cyborg.css"));
 		}
 	}
 }

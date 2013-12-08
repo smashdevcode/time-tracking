@@ -208,9 +208,12 @@ namespace TimeTracking.MvcApplication.Views.Helpers
 
 	public enum BootstrapGlyphiconType
 	{
+		Home,
 		Plus,
+		Save,
 		StepBackward,
-		StepForward
+		StepForward,
+		Trash
 	}
 
 	public static class BootstrapGlyphiconTypeEnumHelper
@@ -221,8 +224,14 @@ namespace TimeTracking.MvcApplication.Views.Helpers
 
 			switch (glyphiconType)
 			{
+				case BootstrapGlyphiconType.Home:
+					glyphiconTypeString = "home";
+					break;
 				case BootstrapGlyphiconType.Plus:
 					glyphiconTypeString = "plus";
+					break;
+				case BootstrapGlyphiconType.Save:
+					glyphiconTypeString = "save";
 					break;
 				case BootstrapGlyphiconType.StepBackward:
 					glyphiconTypeString = "step-backward";
@@ -230,11 +239,43 @@ namespace TimeTracking.MvcApplication.Views.Helpers
 				case BootstrapGlyphiconType.StepForward:
 					glyphiconTypeString = "step-forward";
 					break;
+				case BootstrapGlyphiconType.Trash:
+					glyphiconTypeString = "trash";
+					break;
 				default:
 					throw new ApplicationException("Unexpected BootstrapGlyphiconType enum value: " + glyphiconType.ToString());
 			}
 
 			return "glyphicon-" + glyphiconTypeString;
+		}
+	}
+
+	#endregion
+
+	#region Bootstrap Button Type
+
+	public enum BootstrapButtonType
+	{
+		Button,
+		Reset,
+		Submit
+	}
+
+	public static class BootstrapButtonTypeEnumHelper
+	{
+		public static string GetBootstrapButtonTypeString(BootstrapButtonType buttonType)
+		{
+			switch (buttonType)
+			{
+				case BootstrapButtonType.Button:
+					return "button";
+				case BootstrapButtonType.Reset:
+					return "reset";
+				case BootstrapButtonType.Submit:
+					return "submit";
+				default:
+					throw new ApplicationException("Unexpected BootstrapButtonType enum value: " + buttonType.ToString());
+			}
 		}
 	}
 
@@ -439,7 +480,7 @@ namespace TimeTracking.MvcApplication.Views.Helpers
 
 		#endregion
 
-		#region Bootstrap Button
+		#region Bootstrap Link Button
 
 		/// <summary>
 		/// Returns the markup for a Bootstrap button (as an Html anchor tag).
@@ -448,22 +489,27 @@ namespace TimeTracking.MvcApplication.Views.Helpers
 		/// <param name="buttonText">The button text.</param>
 		/// <param name="actionName">The action name.</param>
 		/// <param name="controllerName">The controller name.</param>
+		/// <param name="elementId">The element ID to use.</param>
 		/// <param name="glyphiconType">The glyphicon type.</param>
 		/// <param name="isBlockLevel">Indicates whether or not the button should expand to fill the available width.</param>
 		/// <param name="buttonStyle">The button style.</param>
 		/// <param name="buttonSize">The button size.</param>
 		/// <returns>Returns a MvcHtmlString.</returns>
 		public static MvcHtmlString BootstrapLinkButton(this HtmlHelper html, string buttonText,
-			string actionName, string controllerName,
+			string actionName, string controllerName, string elementId = null,
 			BootstrapGlyphiconType? glyphiconType = null,
 			bool isBlockLevel = false,
 			BootstrapButtonStyle buttonStyle = BootstrapButtonStyle.Default,
 			BootstrapButtonSize buttonSize = BootstrapButtonSize.Default)
 		{
-			var url = new UrlHelper(html.ViewContext.RequestContext);
-			var href = url.Action(actionName, controllerName);
+			string href = "#";
+			if (!string.IsNullOrWhiteSpace(actionName) && !string.IsNullOrWhiteSpace(controllerName))
+			{
+				var url = new UrlHelper(html.ViewContext.RequestContext);
+				href = url.Action(actionName, controllerName);
+			}
 
-			return GetBootstrapLinkButtonMvcHtmlString(buttonText, glyphiconType, isBlockLevel, 
+			return GetBootstrapLinkButtonMvcHtmlString(buttonText, elementId, glyphiconType, isBlockLevel, 
 				buttonStyle, buttonSize, href);
 		}
 
@@ -474,26 +520,33 @@ namespace TimeTracking.MvcApplication.Views.Helpers
 		/// <param name="buttonText">The button text.</param>
 		/// <param name="routeName">The route name.</param>
 		/// <param name="routeValues">The route values.</param>
+		/// <param name="elementId">The element ID to use.</param>
 		/// <param name="glyphiconType">The glyphicon type.</param>
 		/// <param name="isBlockLevel">Indicates whether or not the button should expand to fill the available width.</param>
 		/// <param name="buttonStyle">The button style.</param>
 		/// <param name="buttonSize">The button size.</param>
 		/// <returns>Returns a MvcHtmlString.</returns>
 		public static MvcHtmlString BootstrapLinkButton(this HtmlHelper html, string buttonText,
-			string routeName, object routeValues,
+			string routeName, object routeValues, string elementId = null,
 			BootstrapGlyphiconType? glyphiconType = null,
 			bool isBlockLevel = false,
 			BootstrapButtonStyle buttonStyle = BootstrapButtonStyle.Default,
 			BootstrapButtonSize buttonSize = BootstrapButtonSize.Default)
 		{
-			var url = new UrlHelper(html.ViewContext.RequestContext);
-			var href = url.RouteUrl(routeName, routeValues);
+			string href = "#";
+			if (!string.IsNullOrWhiteSpace(routeName) && routeValues != null)
+			{
+				var url = new UrlHelper(html.ViewContext.RequestContext);
+				href = url.RouteUrl(routeName, routeValues);
+			}
 
-			return GetBootstrapLinkButtonMvcHtmlString(buttonText, glyphiconType, isBlockLevel, 
+			return GetBootstrapLinkButtonMvcHtmlString(buttonText, elementId, glyphiconType, isBlockLevel, 
 				buttonStyle, buttonSize, href);
 		}
 
-		private static MvcHtmlString GetBootstrapLinkButtonMvcHtmlString(string buttonText, 
+		private static MvcHtmlString GetBootstrapLinkButtonMvcHtmlString(
+			string buttonText,
+			string elementId,
 			BootstrapGlyphiconType? glyphiconType, 
 			bool isBlockLevel,
 			BootstrapButtonStyle buttonStyle, 
@@ -501,6 +554,10 @@ namespace TimeTracking.MvcApplication.Views.Helpers
 			string href)
 		{
 			var anchorBuilder = new TagBuilder("a");
+			if (!string.IsNullOrWhiteSpace(elementId))
+			{
+				anchorBuilder.GenerateId(elementId);
+			}
 			anchorBuilder.AddCssClass("btn");
 			if (isBlockLevel)
 			{
@@ -526,11 +583,67 @@ namespace TimeTracking.MvcApplication.Views.Helpers
 
 			anchorBuilder.InnerHtml = glyphiconString + buttonText;
 
-			return MvcHtmlString.Create(anchorBuilder.ToString());
+			return MvcHtmlString.Create(anchorBuilder.ToString() + Environment.NewLine);
 		}
 
 		#endregion
 
+		#region Bootstrap Button
+
+		/// <summary>
+		/// Returns the markup for a Bootstrap button (as an Html button tag).
+		/// </summary>
+		/// <param name="html">The instance of the HtmlHelper class.</param>
+		/// <param name="buttonText">The button text.</param>
+		/// <param name="elementId">The element ID to use.</param>
+		/// <param name="buttonType">The button type.</param>
+		/// <param name="glyphiconType">The glyphicon type.</param>
+		/// <param name="isBlockLevel">Indicates whether or not the button should expand to fill the available width.</param>
+		/// <param name="buttonStyle">The button style.</param>
+		/// <param name="buttonSize">The button size.</param>
+		/// <returns>Returns a MvcHtmlString.</returns>
+		public static MvcHtmlString BootstrapButton(this HtmlHelper html, string buttonText,
+			string elementId = null, BootstrapButtonType buttonType = BootstrapButtonType.Submit,
+			BootstrapGlyphiconType? glyphiconType = null,
+			bool isBlockLevel = false,
+			BootstrapButtonStyle buttonStyle = BootstrapButtonStyle.Default,
+			BootstrapButtonSize buttonSize = BootstrapButtonSize.Default)
+		{
+			var buttonBuilder = new TagBuilder("button");
+			if (!string.IsNullOrWhiteSpace(elementId))
+			{
+				buttonBuilder.GenerateId(elementId);
+			}
+			buttonBuilder.AddCssClass("btn");
+			buttonBuilder.Attributes.Add("type", BootstrapButtonTypeEnumHelper.GetBootstrapButtonTypeString(buttonType));
+			if (isBlockLevel)
+			{
+				buttonBuilder.AddCssClass("btn-block");
+			}
+			buttonBuilder.AddCssClass(BootstrapButtonStyleEnumHelper.GetBootstrapButtonStyleString(buttonStyle));
+			// not every button size returns a value, so make sure that we've got a button size string
+			// before adding a css class
+			var buttonSizeString = BootstrapButtonSizeEnumHelper.GetBootstrapButtonSizeString(buttonSize);
+			if (!string.IsNullOrWhiteSpace(buttonSizeString))
+			{
+				buttonBuilder.AddCssClass(buttonSizeString);
+			}
+
+			var glyphiconString = "";
+			if (glyphiconType != null)
+			{
+				// add a space to the end of the span string 
+				// to create some whitespace between the icon and the button text
+				glyphiconString = GetBootstrapGlyphiconSpanString(glyphiconType.Value) + " ";
+			}
+
+			buttonBuilder.InnerHtml = glyphiconString + buttonText;
+
+			return MvcHtmlString.Create(buttonBuilder.ToString() + Environment.NewLine);
+		}
+
+		#endregion
+	
 		#region Bootstrap Menu Item
 
 		/// <summary>
@@ -556,7 +669,7 @@ namespace TimeTracking.MvcApplication.Views.Helpers
 				lineItemBuilder.AddCssClass("active");
 			lineItemBuilder.InnerHtml = anchorBuilder.ToString();
 
-			return MvcHtmlString.Create(lineItemBuilder.ToString());
+			return MvcHtmlString.Create(lineItemBuilder.ToString() + Environment.NewLine);
 		}
 
 		#endregion

@@ -73,14 +73,20 @@
 		@switch (Model.Mode)
   {
 	  case ViewModelBase.ViewMode.Add:
-					<input type="submit" value="Add" />
+					@Html.BootstrapButton("Add", glyphiconType: BootstrapGlyphiconType.Plus, 
+						buttonStyle: BootstrapButtonStyle.Primary, buttonSize: BootstrapButtonSize.Large)
 		  break;
 	  case ViewModelBase.ViewMode.Edit:
-					<input type="submit" value="Save" />
-					<a href="#" id="DeleteTimeEntry">Delete</a>
-					@Html.HiddenFor(model => model.TimeEntryId)
+					@Html.BootstrapButton("Save", glyphiconType: BootstrapGlyphiconType.Save,
+						buttonStyle: BootstrapButtonStyle.Primary, buttonSize: BootstrapButtonSize.Large)
+					@Html.BootstrapLinkButton("Delete", null, null, "DeleteTimeEntry",
+						BootstrapGlyphiconType.Trash, buttonStyle: BootstrapButtonStyle.Danger, buttonSize: BootstrapButtonSize.Large)
+	  				@Html.HiddenFor(model => model.TimeEntryId)
 		  break;
   }
+
+			@Html.BootstrapLinkButton("Back to Home", "Index", "Home",
+			   glyphiconType: BootstrapGlyphiconType.Home, buttonStyle: BootstrapButtonStyle.Warning, buttonSize: BootstrapButtonSize.Large)
 		</div>
 	</div>
 
@@ -95,7 +101,3 @@
 		@Html.HiddenFor(model => model.TimeEntryId);
 	}
 }
-
-<div>
-    @Html.ActionLink("Back to Home", "Index", "Home")
-</div>

@@ -9,7 +9,7 @@
 </head>
 <body>
 
-	<div class="navbar navbar-static-top navbar-inverse" role="navigation">
+	<div class="navbar navbar-static-top navbar-default" role="navigation">
 		<div class="container">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -33,15 +33,25 @@
 
 		<div class="row">
 
+			<div class="col-md-12">
+
+				<div class="page-header">
+					<h1>@ViewBag.Title</h1>
+				</div>
+	
+			</div>
+
+		</div>
+
+		<div class="row">
+
 			<div class="col-md-9">
 
-				<h2>@ViewBag.Title</h2>
-	
 				@RenderBody()
 
 			</div>
 
-			<div class="col-md-3 secondary">
+			<div class="col-md-3">
 
 				@RenderSection("secondary", required: false)
 
